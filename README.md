@@ -18,6 +18,13 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 
 You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
+## Assets Column Demo
+
+This project includes a minimal, responsive single-column asset layout implemented in `app/page.tsx`.
+
+- To add local images or GIFs, drop files into `public/assets` and update the `assets` array in `app/page.tsx` to reference the files (for example `/assets/my-gif.gif`).
+- The layout is responsive and will center a single column; images are full-width with a max-width constraint for large screens.
+
 This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
 ## Learn More

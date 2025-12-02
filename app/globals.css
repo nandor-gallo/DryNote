@@ -5,7 +5,11 @@
   --foreground: #171717;
 }
 
-@theme inline {
+/* Move theme font vars to the layout via next/font -- the @theme block
+   was an unknown rule that caused a compile error. Keep CSS variables
+   clean and simple here. */
+/* Define fallback variables here if needed */
+:root {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
@@ -24,3 +28,187 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+/* Asset column layout (simple, responsive) */
+.assets-root {
+  display: flex;
+  justify-content: center; /* center the column horizontally */
+  padding: 2rem 1rem;
+}
+
+/* Sidebar (thin, vertical, 3 segmented) */
+.sidebar {
+  position: fixed;
+  /* align near the left edge of the centered content (content max width 900px)
+     center vertically in the viewport */
+  left: calc(50% - 460px);
+  top: 50%;
+  transform: translateY(-50%);
+  height: 60vh;
+  width: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  z-index: 30;
+  align-items: center;
+  justify-content: center;
+}
+
+.sidebar-seg {
+  flex: 1 1 0;
+  width: 12px;
+  background: #fff;
+  border-radius: 6px;
+  border: 1px solid rgba(0,0,0,0.06);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+  transition: transform 160ms ease, background-color 160ms ease, box-shadow 160ms ease;
+  cursor: pointer;
+}
+
+
+.sidebar-seg:hover,
+.sidebar-active {
+  transform: scaleY(1.04) scaleX(1.03);
+  background: #111827; /* dark gray accent */
+  color: #fff;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.2);
+}
+
+.sidebar-seg:focus { outline: 2px solid rgba(59,130,246,0.6); }
+
+/* Hide on small screens */
+@media (max-width: 640px) {
+  .sidebar { display: none; }
+}
+
+.sidebar-seg[disabled] { opacity: 0.45; pointer-events: none; }
+
+.assets-container {
+  width: 100%;
+  max-width: 900px; /* constrain column width on large screens */
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem; /* spacing between assets */
+}
+
+.asset-figure {
+  width: 100%;
+  margin: 0;
+  border-radius: 10px;
+  overflow: hidden;
+  background: #f5f5f5;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.06);
+}
+
+.asset-figure img {
+  display: block;
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+  /* No heavy transforms on mobile; only animate when hover is supported */
+  max-height: 80vh; /* prevents extremely tall images from overflowing */
+}
+
+.asset-figure img {
+  transition: transform 270ms ease, filter 270ms ease;
+}
+
+/* Only apply hover effects on devices that support hovering */
+@media (hover: hover) and (pointer: fine) {
+  .asset-figure:hover img {
+    transform: scale(1.02);
+    filter: saturate(1.04);
+  }
+}
+
+/* Touch-specific improvements */
+.asset-figure {
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation; /* better for tap gestures */
+}
+
+/* Accessibility: improve spacing and tappable sizes on small screens */
+@media (max-width: 640px) {
+  body { font-size: 16px; }
+  .assets-container { gap: 1rem; }
+  .asset-figure { border-radius: 8px; }
+}
+
+/* On larger viewports, switch to a two-column grid and allow the first
+   asset to span both columns (hero). Keep the single-column flow on
+   smaller screens for best mobile UX. */
+@media (min-width: 900px) {
+  .assets-container {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+    align-items: start;
+  }
+
+  /* Let the header span the full width of the grid */
+  .assets-container > header {
+    grid-column: 1 / -1;
+  }
+
+  /* Make the first asset a hero that spans both columns */
+  .assets-container > .asset-figure:first-of-type {
+    grid-column: 1 / -1;
+    aspect-ratio: 16 / 7;
+  }
+
+  /* Default: all items span both columns to keep single-column feel */
+  .assets-container > .asset-figure {
+    grid-column: 1 / -1;
+  }
+
+  /* Place the second row items into two columns: items 2 & 3 */
+  .assets-container > .asset-figure:nth-of-type(2) {
+    grid-column: 1;
+  }
+  .assets-container > .asset-figure:nth-of-type(3) {
+    grid-column: 2;
+  }
+
+  /* Add a little more height space for normal items to keep balance */
+  .assets-container > .asset-figure {
+    min-height: 140px;
+  }
+
+  /* Make room for the sidebar so it doesn't overlap content */
+  .assets-root { padding-left: 4.5rem; }
+}
+
+.asset-figure:hover img {
+  transform: scale(1.02);
+  filter: saturate(1.04);
+}
+
+/* Section titles styling */
+.section-title {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--foreground);
+  margin: 0.6rem 0 0.4rem 0;
+  padding: 0.25rem 0;
+}
+
+/* Section highlight when hovering via sidebar or section itself */
+.section-hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.12);
+  transition: transform 160ms ease, box-shadow 160ms ease;
+}
+
+@media (min-width: 900px) {
+  .assets-container > .section-title {
+    grid-column: 1 / -1;
+  }
+}
+
+/* small screens: slightly tighter padding */
+@media (max-width: 640px) {
+  .assets-root {
+    padding: 1rem 0.5rem;
+  }
+}
+
